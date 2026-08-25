@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Entejar Alam</title>
+<link>https://entejar.github.io/blog.html</link>
+<atom:link href="https://entejar.github.io/blog.xml" rel="self" type="application/rss+xml"/>
+<description>Bayesian methods for causal inference, and writing on causal inference &amp; experimentation.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Tue, 25 Aug 2026 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>What randomization actually buys you (and what it doesn’t)</title>
+  <link>https://entejar.github.io/posts/what-randomization-buys-you/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="tldr"><strong>TL;DR</strong> — Randomization doesn't remove noise, it removes <em>bias</em>. It makes the treatment independent of the potential outcomes, which is what licenses the difference-in-means as an unbiased effect estimate. Variance is a separate problem — and that's where tricks like CUPED come in.</div>
+<p>There’s a common misreading of what an A/B test gives you: the sense that because you randomized, the number you read off is <em>the truth</em>. Randomization is powerful, but it solves exactly one problem — and it’s worth being precise about which one, because the other problems don’t go away.</p>
+<section id="the-setup-two-outcomes-one-of-which-you-never-see" class="level2">
+<h2 class="anchored" data-anchor-id="the-setup-two-outcomes-one-of-which-you-never-see">The setup: two outcomes, one of which you never see</h2>
+<p>For each unit <img src="https://latex.codecogs.com/png.latex?i">, imagine two potential outcomes: <img src="https://latex.codecogs.com/png.latex?Y_i(1)"> if treated and <img src="https://latex.codecogs.com/png.latex?Y_i(0)"> if not. The individual treatment effect is <img src="https://latex.codecogs.com/png.latex?%5Ctau_i%20=%20Y_i(1)%20-%20Y_i(0)">. The catch — the <em>fundamental problem of causal inference</em> — is that you only ever observe one of them:</p>
+<p><img src="https://latex.codecogs.com/png.latex?Y_i%20=%20T_i%20%5C,%20Y_i(1)%20+%20(1%20-%20T_i)%5C,%20Y_i(0)."></p>
+<p>So we lower our sights from <img src="https://latex.codecogs.com/png.latex?%5Ctau_i"> to the <strong>average treatment effect</strong>, <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BATE%7D%20=%20%5Cmathbb%7BE%7D%5BY_i(1)%20-%20Y_i(0)%5D">.</p>
+</section>
+<section id="what-randomization-does" class="level2">
+<h2 class="anchored" data-anchor-id="what-randomization-does">What randomization does</h2>
+<p>The natural estimator is the difference in group means. It’s only trustworthy if the treated and control groups would have looked the same <em>absent treatment</em>. Randomization guarantees that by making treatment <strong>independent of the potential outcomes</strong>:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5C%7BY_i(0),%20Y_i(1)%5C%7D%20%5Cperp%5C!%5C!%5C!%5Cperp%20T_i."></p>
+<p>Under that independence the difference in means is unbiased for the ATE. That’s the whole trick. It’s a statement about <strong>bias</strong>, not noise.</p>
+<blockquote class="blockquote">
+<p>Randomization buys you exchangeability. It does not buy you precision.</p>
+</blockquote>
+</section>
+<section id="what-it-doesnt-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-it-doesnt-do">What it doesn’t do</h2>
+<p>Your estimate still has variance, and with a skewed metric — revenue, watch-time, anything zero-inflated — that variance can be large enough to hide a real effect. The cheapest fix is <strong>CUPED</strong>: use a pre-experiment covariate <img src="https://latex.codecogs.com/png.latex?X"> correlated with <img src="https://latex.codecogs.com/png.latex?Y"> but, by construction, unaffected by treatment, and adjust</p>
+<p><img src="https://latex.codecogs.com/png.latex?Y%5E%7B%5Ctext%7Bcuped%7D%7D%20=%20Y%20-%20%5Ctheta%5C,(X%20-%20%5Cbar%20X),%20%5Cqquad%20%5Ctheta%20=%20%5Cfrac%7B%5Coperatorname%7BCov%7D(Y,%20X)%7D%7B%5Coperatorname%7BVar%7D(X)%7D."></p>
+<p>Because <img src="https://latex.codecogs.com/png.latex?X"> is independent of treatment, this leaves the estimate unbiased but shrinks its variance by <img src="https://latex.codecogs.com/png.latex?1%20-%20%5Crho%5E2">, where <img src="https://latex.codecogs.com/png.latex?%5Crho%20=%20%5Coperatorname%7Bcorr%7D(Y,%20X)">. One subtlety worth stating, because it’s easy to get wrong: use a <em>single</em> <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> and center <img src="https://latex.codecogs.com/png.latex?X"> by the <strong>pooled</strong> mean across both arms. Center each arm by its own mean and the correction cancels out — you get your noisy estimate right back. Let’s see it work:</p>
+<div id="cell-fig-cuped" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">rng  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.random.default_rng(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>)</span>
+<span id="cb1-5">n, tau, reps, rho <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4000</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># per-arm N, true effect, sims, corr(X, Y)</span></span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> ate_cuped(y_t, y_c, x_t, x_c):</span>
+<span id="cb1-8">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.concatenate([x_t, x_c])<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.concatenate([y_t, y_c])</span>
+<span id="cb1-9">    theta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.cov(y, x, ddof<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> np.var(x, ddof<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pooled slope</span></span>
+<span id="cb1-10">    mu_x  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x.mean()                                         <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># common center (not per-arm!)</span></span>
+<span id="cb1-11">    yc_t  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> y_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> theta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (x_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> mu_x)</span>
+<span id="cb1-12">    yc_c  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> y_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> theta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (x_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> mu_x)</span>
+<span id="cb1-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> yc_t.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> yc_c.mean()</span>
+<span id="cb1-14"></span>
+<span id="cb1-15"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> one_experiment():</span>
+<span id="cb1-16">    x_t, x_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rng.normal(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n), rng.normal(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n)          <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pre-period covariate</span></span>
+<span id="cb1-17">    y_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rho<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> np.sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>rho<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>rng.normal(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> tau <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># treated outcome</span></span>
+<span id="cb1-18">    y_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rho<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> np.sqrt(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>rho<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>rng.normal(size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>n)       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># control outcome</span></span>
+<span id="cb1-19">    naive <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> y_t.mean() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> y_c.mean()</span>
+<span id="cb1-20">    adj   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ate_cuped(y_t, y_c, x_t, x_c)</span>
+<span id="cb1-21">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> naive, adj</span>
+<span id="cb1-22"></span>
+<span id="cb1-23">res <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([one_experiment() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(reps)])</span>
+<span id="cb1-24">naive_sd, cuped_sd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> res[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].std(), res[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].std()</span>
+<span id="cb1-25"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"True effect:        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>tau<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-26"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Naive estimate SD:  </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>naive_sd<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-27"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"CUPED estimate SD:  </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>cuped_sd<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb1-28"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Variance reduction: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>(cuped_sd<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>naive_sd)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.1f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">%   (theory: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>rho<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">%)"</span>)</span>
+<span id="cb1-29"></span>
+<span id="cb1-30">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.6</span>))</span>
+<span id="cb1-31">ax.hist(res[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">.55</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"naive  (SD </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>naive_sd<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)"</span>)</span>
+<span id="cb1-32">ax.hist(res[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], bins<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">.55</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"CUPED (SD </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>cuped_sd<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)"</span>)</span>
+<span id="cb1-33">ax.axvline(tau, color<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"k"</span>, lw<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, ls<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--"</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"true effect"</span>)</span>
+<span id="cb1-34">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"estimated ATE"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"frequency"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax.legend(frameon<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb1-35">plt.tight_layout()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True effect:        0.200
+Naive estimate SD:  0.0319
+CUPED estimate SD:  0.0259
+Variance reduction: 34.2%   (theory: 36%)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div id="fig-cuped" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cuped-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://entejar.github.io/posts/what-randomization-buys-you/index_files/figure-html/fig-cuped-output-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cuped-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Sampling distribution of the ATE estimate over 4,000 simulated experiments. Same unbiased target, much tighter spread once we adjust for a pre-period covariate.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>A pre-period metric correlated at <img src="https://latex.codecogs.com/png.latex?%5Crho%20=%200.6"> cuts variance by about a third — for free, with no extra users and no change to the estimand.</p>
+</section>
+<section id="the-takeaway" class="level2">
+<h2 class="anchored" data-anchor-id="the-takeaway">The takeaway</h2>
+<p>Keep the two jobs separate. <strong>Identification</strong> — getting an unbiased target — is what randomization (or a credible quasi-experimental design) handles. <strong>Estimation</strong> — getting a tight, decision-useful number — is a variance problem you attack with covariate adjustment, stratification, or a better estimator. Conflating them is how teams end up either trusting a noisy readout or blaming randomization for a problem it was never meant to solve.</p>
+<p>Next time: what to do when you <em>can’t</em> randomize, and geo-level quasi-experiments become the tool of choice.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>causal-inference</category>
+  <category>experimentation</category>
+  <category>potential-outcomes</category>
+  <guid>https://entejar.github.io/posts/what-randomization-buys-you/</guid>
+  <pubDate>Tue, 25 Aug 2026 05:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

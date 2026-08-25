@@ -1,0 +1,142 @@
+[
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Writing\nNotes on causal inference and experimentation — the methods, the pitfalls, and what actually holds up in practice. New posts are announced on LinkedIn; the deep dive lives here.\n\n\n\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nAug 25, 2026\n\n\nWhat randomization actually buys you (and what it doesn’t)\n\n\ncausal-inference, experimentation, potential-outcomes\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "publications.html",
+    "href": "publications.html",
+    "title": "Publications",
+    "section": "",
+    "text": "Selected work\n* denotes equal contribution. See Google Scholar for the complete, up-to-date list."
+  },
+  {
+    "objectID": "publications.html#preprints-working-papers",
+    "href": "publications.html#preprints-working-papers",
+    "title": "Publications",
+    "section": "Preprints & working papers",
+    "text": "Preprints & working papers\n\n  2025under review\n  \n    Semiparametric Bayesian GLM with Inhomogeneous Normalized Random Measures\n    Entejar Alam, Paul J. Rathouz, Peter Müller\n    arXiv:2502.17827\n  \n\n\n  2025under review\n  \n    Decision-Theoretic Subgroup Detection with Bayesian Machine Learning\n    Entejar Alam*, Poorbita Kundu*, Antonio R. Linero\n    arXiv:2509.05832\n  \n\n\n  2025preprint · book\n  \n    Proportional-Hazards Ordinal BART for Heterogeneous Treatment Effects (PHOBART)\n    Entejar Alam, Antonio R. Linero\n    arXiv:2502.00606Business Data Science · Ch. 25"
+  },
+  {
+    "objectID": "publications.html#peer-reviewed",
+    "href": "publications.html#peer-reviewed",
+    "title": "Publications",
+    "section": "Peer-reviewed",
+    "text": "Peer-reviewed\n\nEdit me: add published journal articles here, one pub block each (copy the HTML pattern above and swap the venue, e.g. JASA)."
+  },
+  {
+    "objectID": "publications.html#software",
+    "href": "publications.html#software",
+    "title": "Publications",
+    "section": "Software",
+    "text": "Software\n\n  open source\n  \n    CausalABTesting · geo-lift-benchmark · DPGLM · CLogLogBART\n    End-to-end A/B testing & uplift, geo-incrementality benchmarks, and the Bayesian model implementations behind the papers above.\n    github.com/Entejar"
+  },
+  {
+    "objectID": "posts/what-randomization-buys-you/index.html",
+    "href": "posts/what-randomization-buys-you/index.html",
+    "title": "What randomization actually buys you (and what it doesn’t)",
+    "section": "",
+    "text": "TL;DR — Randomization doesn't remove noise, it removes bias. It makes the treatment independent of the potential outcomes, which is what licenses the difference-in-means as an unbiased effect estimate. Variance is a separate problem — and that's where tricks like CUPED come in.\nThere’s a common misreading of what an A/B test gives you: the sense that because you randomized, the number you read off is the truth. Randomization is powerful, but it solves exactly one problem — and it’s worth being precise about which one, because the other problems don’t go away."
+  },
+  {
+    "objectID": "posts/what-randomization-buys-you/index.html#the-setup-two-outcomes-one-of-which-you-never-see",
+    "href": "posts/what-randomization-buys-you/index.html#the-setup-two-outcomes-one-of-which-you-never-see",
+    "title": "What randomization actually buys you (and what it doesn’t)",
+    "section": "The setup: two outcomes, one of which you never see",
+    "text": "The setup: two outcomes, one of which you never see\nFor each unit \\(i\\), imagine two potential outcomes: \\(Y_i(1)\\) if treated and \\(Y_i(0)\\) if not. The individual treatment effect is \\(\\tau_i = Y_i(1) - Y_i(0)\\). The catch — the fundamental problem of causal inference — is that you only ever observe one of them:\n\\[Y_i = T_i \\, Y_i(1) + (1 - T_i)\\, Y_i(0).\\]\nSo we lower our sights from \\(\\tau_i\\) to the average treatment effect, \\(\\text{ATE} = \\mathbb{E}[Y_i(1) - Y_i(0)]\\)."
+  },
+  {
+    "objectID": "posts/what-randomization-buys-you/index.html#what-randomization-does",
+    "href": "posts/what-randomization-buys-you/index.html#what-randomization-does",
+    "title": "What randomization actually buys you (and what it doesn’t)",
+    "section": "What randomization does",
+    "text": "What randomization does\nThe natural estimator is the difference in group means. It’s only trustworthy if the treated and control groups would have looked the same absent treatment. Randomization guarantees that by making treatment independent of the potential outcomes:\n\\[\\{Y_i(0), Y_i(1)\\} \\perp\\!\\!\\!\\perp T_i.\\]\nUnder that independence the difference in means is unbiased for the ATE. That’s the whole trick. It’s a statement about bias, not noise.\n\nRandomization buys you exchangeability. It does not buy you precision."
+  },
+  {
+    "objectID": "posts/what-randomization-buys-you/index.html#what-it-doesnt-do",
+    "href": "posts/what-randomization-buys-you/index.html#what-it-doesnt-do",
+    "title": "What randomization actually buys you (and what it doesn’t)",
+    "section": "What it doesn’t do",
+    "text": "What it doesn’t do\nYour estimate still has variance, and with a skewed metric — revenue, watch-time, anything zero-inflated — that variance can be large enough to hide a real effect. The cheapest fix is CUPED: use a pre-experiment covariate \\(X\\) correlated with \\(Y\\) but, by construction, unaffected by treatment, and adjust\n\\[Y^{\\text{cuped}} = Y - \\theta\\,(X - \\bar X), \\qquad \\theta = \\frac{\\operatorname{Cov}(Y, X)}{\\operatorname{Var}(X)}.\\]\nBecause \\(X\\) is independent of treatment, this leaves the estimate unbiased but shrinks its variance by \\(1 - \\rho^2\\), where \\(\\rho = \\operatorname{corr}(Y, X)\\). One subtlety worth stating, because it’s easy to get wrong: use a single \\(\\theta\\) and center \\(X\\) by the pooled mean across both arms. Center each arm by its own mean and the correction cancels out — you get your noisy estimate right back. Let’s see it work:\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nrng  = np.random.default_rng(7)\nn, tau, reps, rho = 2000, 0.20, 4000, 0.6   # per-arm N, true effect, sims, corr(X, Y)\n\ndef ate_cuped(y_t, y_c, x_t, x_c):\n    x = np.concatenate([x_t, x_c]); y = np.concatenate([y_t, y_c])\n    theta = np.cov(y, x, ddof=1)[0, 1] / np.var(x, ddof=1)   # pooled slope\n    mu_x  = x.mean()                                         # common center (not per-arm!)\n    yc_t  = y_t - theta * (x_t - mu_x)\n    yc_c  = y_c - theta * (x_c - mu_x)\n    return yc_t.mean() - yc_c.mean()\n\ndef one_experiment():\n    x_t, x_c = rng.normal(size=n), rng.normal(size=n)          # pre-period covariate\n    y_t = rho*x_t + np.sqrt(1-rho**2)*rng.normal(size=n) + tau # treated outcome\n    y_c = rho*x_c + np.sqrt(1-rho**2)*rng.normal(size=n)       # control outcome\n    naive = y_t.mean() - y_c.mean()\n    adj   = ate_cuped(y_t, y_c, x_t, x_c)\n    return naive, adj\n\nres = np.array([one_experiment() for _ in range(reps)])\nnaive_sd, cuped_sd = res[:, 0].std(), res[:, 1].std()\nprint(f\"True effect:        {tau:.3f}\")\nprint(f\"Naive estimate SD:  {naive_sd:.4f}\")\nprint(f\"CUPED estimate SD:  {cuped_sd:.4f}\")\nprint(f\"Variance reduction: {100*(1-(cuped_sd/naive_sd)**2):.1f}%   (theory: {100*rho**2:.0f}%)\")\n\nfig, ax = plt.subplots(figsize=(7, 3.6))\nax.hist(res[:, 0], bins=40, alpha=.55, label=f\"naive  (SD {naive_sd:.3f})\")\nax.hist(res[:, 1], bins=40, alpha=.55, label=f\"CUPED (SD {cuped_sd:.3f})\")\nax.axvline(tau, color=\"k\", lw=1, ls=\"--\", label=\"true effect\")\nax.set_xlabel(\"estimated ATE\"); ax.set_ylabel(\"frequency\"); ax.legend(frameon=False)\nplt.tight_layout(); plt.show()\n\nTrue effect:        0.200\nNaive estimate SD:  0.0319\nCUPED estimate SD:  0.0259\nVariance reduction: 34.2%   (theory: 36%)\n\n\n\n\n\n\n\n\nFigure 1: Sampling distribution of the ATE estimate over 4,000 simulated experiments. Same unbiased target, much tighter spread once we adjust for a pre-period covariate.\n\n\n\n\n\nA pre-period metric correlated at \\(\\rho = 0.6\\) cuts variance by about a third — for free, with no extra users and no change to the estimand."
+  },
+  {
+    "objectID": "posts/what-randomization-buys-you/index.html#the-takeaway",
+    "href": "posts/what-randomization-buys-you/index.html#the-takeaway",
+    "title": "What randomization actually buys you (and what it doesn’t)",
+    "section": "The takeaway",
+    "text": "The takeaway\nKeep the two jobs separate. Identification — getting an unbiased target — is what randomization (or a credible quasi-experimental design) handles. Estimation — getting a tight, decision-useful number — is a variance problem you attack with covariate adjustment, stratification, or a better estimator. Conflating them is how teams end up either trusting a noisy readout or blaming randomization for a problem it was never meant to solve.\nNext time: what to do when you can’t randomize, and geo-level quasi-experiments become the tool of choice."
+  },
+  {
+    "objectID": "research.html",
+    "href": "research.html",
+    "title": "Research",
+    "section": "",
+    "text": "What I work on"
+  },
+  {
+    "objectID": "research.html#bayesian-nonparametrics",
+    "href": "research.html#bayesian-nonparametrics",
+    "title": "Research",
+    "section": "Bayesian nonparametrics",
+    "text": "Bayesian nonparametrics"
+  },
+  {
+    "objectID": "research.html#causal-effects-from-biased-and-observational-data",
+    "href": "research.html#causal-effects-from-biased-and-observational-data",
+    "title": "Research",
+    "section": "Causal effects from biased and observational data",
+    "text": "Causal effects from biased and observational data"
+  },
+  {
+    "objectID": "research.html#experimentation-measurement",
+    "href": "research.html#experimentation-measurement",
+    "title": "Research",
+    "section": "Experimentation & measurement",
+    "text": "Experimentation & measurement\nEdit me: add or drop threads as your work evolves. Code lives at github.com/Entejar."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Causal inferenceyou can defend.",
+    "section": "",
+    "text": "PhD Candidate · Statistics & Data Science · UT Austin\n      Causal inferenceyou can defend.\n      I develop Bayesian methods for estimating causal effects from messy,\n        biased, and observational data — and write about causal inference and experimentation as\n        they actually get used.\n      \n        Read the blog\n        Publications\n        CV\n      \n    \n    \n      \n        \n          \n          \n        \n        \n        \n        \n        τ\n        X\n        T\n        Y\n      \n      confounder X · treatment T · outcome Y · effect τ\n    \n  \n\n\n\n  \n    \n      What I work onThree threads, one question\n      Full research →\n    \n    \n      01Bayesian nonparametricsFlexible models — Dirichlet-process GLMs and normalized random measures — that let the data choose the functional form instead of assuming it.\n      02Causal effects from biased dataEstimating treatment effects under outcome-dependent sampling and confounding, with honest post-selection inference for data-adaptive subgroups.\n      03Experimentation & measurementA/B testing, geo-lift and incrementality, difference-in-differences and synthetic control — turning experiments into decisions.\n    \n  \n\n\n  \n    \n      WritingFrom the blog\n      All posts →\n    \n    \n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nCategories\n\n\n\n\n\n\n\n\nAug 25, 2026\n\n\nWhat randomization actually buys you (and what it doesn’t)\n\n\ncausal-inference, experimentation, potential-outcomes\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "cv.html",
+    "href": "cv.html",
+    "title": "Curriculum Vitae",
+    "section": "",
+    "text": "Background\nDownload full CV (PDF)"
+  },
+  {
+    "objectID": "cv.html#education",
+    "href": "cv.html#education",
+    "title": "Curriculum Vitae",
+    "section": "Education",
+    "text": "Education\n\n  2020 – 2026 (exp.)\n  \n    Ph.D., Statistics & Data Science\n    The University of Texas at Austin\n    Advisor: Peter Müller. GPA 4.0.\n    Dissertation: Bayesian nonparametric methods for causal effect estimation under outcome-dependent sampling.\n  \n\n\n  [  ]\n  M.Stat., StatisticsIndian Statistical InstituteGraduated Rank 1."
+  },
+  {
+    "objectID": "cv.html#experience",
+    "href": "cv.html#experience",
+    "title": "Curriculum Vitae",
+    "section": "Experience",
+    "text": "Experience\n\n  [  ]\n  \n    Research Intern — Ads Measurement\n    Google (YouTube)\n    Built a zero-inflated Bayesian causal model for intent-to-treat conversion-lift estimation on sparse, semi-continuous ad-revenue data.\n    Developed an ordinal-outcome BART (cloglog link) for heterogeneous treatment effects with decision-relevant posterior probabilities.\n  \n\n\n  2+ yrs\n  Risk Modeling & AMLUBS\n  Led a 4-person team; reduced fraud false positives ~15% across 25M+ transactions (est. \\$5–6M annual savings)."
+  },
+  {
+    "objectID": "cv.html#selected-honors",
+    "href": "cv.html#selected-honors",
+    "title": "Curriculum Vitae",
+    "section": "Selected honors",
+    "text": "Selected honors\n\nSBSS Student Paper Award; multiple Best Student Paper awards.\nM.Stat. Rank 1, Indian Statistical Institute."
+  },
+  {
+    "objectID": "cv.html#skills",
+    "href": "cv.html#skills",
+    "title": "Curriculum Vitae",
+    "section": "Skills",
+    "text": "Skills\n\nMethods: Bayesian nonparametrics, causal inference, MCMC, experimentation & A/B testing, difference-in-differences, synthetic control, uplift/HTE.\nTools: Python, R, SQL, Stan, LaTeX, Git."
+  }
+]

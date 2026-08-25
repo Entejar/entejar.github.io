@@ -1,0 +1,32 @@
+/* Motion + responsive — plain CSS so Quarto's SCSS var analysis doesn't touch it */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dag__edge { stroke-dasharray:200; stroke-dashoffset:200; animation:draw 1s ease forwards; }
+  .dag__edge--e1{animation-delay:.15s} .dag__edge--e2{animation-delay:.35s} .dag__edge--effect{animation-delay:.6s}
+  .dag__node,.dag__arrow,.dag__tau{opacity:0;animation:pop .5s ease forwards}
+  .dag__node--x{animation-delay:0s} .dag__node--t{animation-delay:.2s} .dag__node--y{animation-delay:.4s}
+  .dag__arrow--effect,.dag__tau{animation-delay:.95s}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* built-in listing (table) styled to match */
+.quarto-listing table{width:100%;border-collapse:collapse;margin-top:.5rem}
+.quarto-listing thead th{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--slate);border-bottom:1px solid var(--line);padding:.6rem .8rem .6rem 0;text-align:left}
+.quarto-listing tbody td{border-bottom:1px solid var(--line);padding:.95rem .8rem .95rem 0;vertical-align:baseline}
+.quarto-listing .listing-title a{font-family:var(--font-display);font-size:1.15rem;color:var(--ink);text-decoration:none}
+.quarto-listing .listing-title a:hover{color:var(--teal)}
+.quarto-listing .listing-date{font-family:var(--font-mono);font-size:.8rem;color:var(--slate);white-space:nowrap}
+.quarto-listing .listing-category{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;color:var(--teal);
+  background:var(--teal-tint);border-radius:100px;padding:.16rem .55rem;margin:0 .3rem .3rem 0;display:inline-block;border:none}
+
+@media (max-width:860px){
+  .hero__grid{grid-template-columns:1fr}
+  .hero__figure{max-width:420px;margin-inline:auto;order:-1}
+  .focus-grid{grid-template-columns:1fr}
+  .pub,.post-row,.cv-block{grid-template-columns:1fr;gap:.5rem}
+  .post-row__date,.pub__meta,.cv-block__when{padding-top:0}
+}
