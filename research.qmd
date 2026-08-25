@@ -1,0 +1,26 @@
+---
+title: "Research"
+pagetitle: "Research — Entejar Alam"
+grid:
+  body-width: 760px
+---
+
+[What I work on]{.eyebrow .eyebrow--gold}
+
+
+
+## Bayesian nonparametrics
+
+
+
+## Causal effects from biased and observational data
+
+
+
+## Experimentation & measurement
+
+
+
+```{=html}
+<div class="editme">Edit me: add or drop threads as your work evolves. Code lives at <a href="https://github.com/Entejar">github.com/Entejar</a>.</div>
+```

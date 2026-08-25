@@ -1,0 +1,12 @@
+/*-- scss:rules --*/
+:root {
+  --paper:#0F1413; --paper-2:#18201E; --ink:#E9ECE8; --slate:#9AA29C; --slate-soft:#6B736D;
+  --line:#26302D; --teal:#5FBEB2; --teal-deep:#86D3C8; --gold:#D8AC54; --gold-soft:#2A2416; --teal-tint:#13302E;
+  --font-display:"Fraunces",Georgia,serif;
+  --font-body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --measure:68ch; --wrap:1140px; --radius:4px;
+}
+/* keep text legible on the lighter accent buttons in dark mode */
+.btn--primary, .btn--primary:hover { color:#0F1413; }
+.btn--gold, .btn--gold:hover { color:#1A1406; }

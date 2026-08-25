@@ -1,0 +1,59 @@
+---
+title: "Curriculum Vitae"
+pagetitle: "CV — Entejar Alam"
+---
+
+[Background]{.eyebrow .eyebrow--gold}
+
+<a class="btn btn--gold" href="assets/cv.pdf">Download full CV (PDF)</a>
+
+::: {.editme}
+Edit me: drop your compiled LaTeX CV at `assets/cv.pdf` so the button works, and fill the `[ ]` dates below.
+:::
+
+## Education
+
+```{=html}
+<div class="cv-block">
+  <div class="cv-block__when">2020 – 2026 <span style="color:var(--slate-soft)">(exp.)</span></div>
+  <div>
+    <h3>Ph.D., Statistics &amp; Data Science</h3>
+    <div class="cv-block__where">The University of Texas at Austin</div>
+    <ul><li>Advisor: Peter Müller. GPA 4.0.</li>
+    <li>Dissertation: Bayesian nonparametric methods for causal effect estimation under outcome-dependent sampling.</li></ul>
+  </div>
+</div>
+<div class="cv-block">
+  <div class="cv-block__when">[  ]</div>
+  <div><h3>M.Stat., Statistics</h3><div class="cv-block__where">Indian Statistical Institute</div><ul><li>Graduated Rank 1.</li></ul></div>
+</div>
+```
+
+## Experience
+
+```{=html}
+<div class="cv-block">
+  <div class="cv-block__when">[  ]</div>
+  <div>
+    <h3>Research Intern — Ads Measurement</h3>
+    <div class="cv-block__where">Google (YouTube)</div>
+    <ul><li>Built a zero-inflated Bayesian causal model for intent-to-treat conversion-lift estimation on sparse, semi-continuous ad-revenue data.</li>
+    <li>Developed an ordinal-outcome BART (cloglog link) for heterogeneous treatment effects with decision-relevant posterior probabilities.</li></ul>
+  </div>
+</div>
+<div class="cv-block">
+  <div class="cv-block__when">2+ yrs</div>
+  <div><h3>Risk Modeling &amp; AML</h3><div class="cv-block__where">UBS</div>
+  <ul><li>Led a 4-person team; reduced fraud false positives ~15% across 25M+ transactions (est. \$5–6M annual savings).</li></ul></div>
+</div>
+```
+
+## Selected honors
+
+- SBSS Student Paper Award; multiple Best Student Paper awards.
+- M.Stat. Rank 1, Indian Statistical Institute.
+
+## Skills
+
+- **Methods:** Bayesian nonparametrics, causal inference, MCMC, experimentation & A/B testing, difference-in-differences, synthetic control, uplift/HTE.
+- **Tools:** Python, R, SQL, Stan, LaTeX, Git.

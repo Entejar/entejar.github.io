@@ -1,0 +1,5 @@
+# Defaults for every post
+freeze: auto
+toc: true
+toc-location: right
+title-block-banner: false

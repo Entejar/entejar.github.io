@@ -1,0 +1,19 @@
+---
+title: "Blog"
+pagetitle: "Blog — Entejar Alam"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: table
+  fields: [date, title, categories]
+  date-format: "MMM D, YYYY"
+  table-striped: false
+  table-hover: true
+  categories: true
+  feed: true
+---
+
+[Writing]{.eyebrow .eyebrow--gold}
+
+Notes on causal inference and experimentation — the methods, the pitfalls, and what actually
+holds up in practice. New posts are announced on LinkedIn; the deep dive lives here.

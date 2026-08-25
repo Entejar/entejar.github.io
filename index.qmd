@@ -1,0 +1,77 @@
+---
+pagetitle: "Entejar Alam — Causal inference & experimentation"
+page-layout: full
+toc: false
+anchor-sections: false
+listing:
+  - id: latest
+    contents: posts
+    sort: "date desc"
+    max-items: 4
+    type: table
+    fields: [date, title, categories]
+    date-format: "MMM D, YYYY"
+    table-hover: true
+    feed: false
+---
+
+```{=html}
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow">PhD Candidate · Statistics &amp; Data Science · UT Austin</p>
+      <h1 class="hero__title">Causal inference<br>you can defend.</h1>
+      <p class="hero__lede">I develop Bayesian methods for estimating causal effects from messy,
+        biased, and observational data — and write about causal inference and experimentation as
+        they actually get used.</p>
+      <div class="hero__actions">
+        <a class="btn btn--gold" href="blog.html">Read the blog</a>
+        <a class="btn btn--primary" href="publications.html">Publications</a>
+        <a class="btn btn--ghost" href="cv.html">CV</a>
+      </div>
+    </div>
+    <figure class="hero__figure">
+      <svg class="dag" viewBox="0 0 340 240" role="img" aria-label="Causal diagram: confounder X points to treatment T and outcome Y; the treatment effect tau is the T to Y edge.">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path class="dag__arrow" d="M0,0 L7,3 L0,6 Z"/></marker>
+          <marker id="arg" markerWidth="10" markerHeight="10" refX="7.5" refY="3.2" orient="auto"><path class="dag__arrow--effect" d="M0,0 L7.5,3.2 L0,6.4 Z"/></marker>
+        </defs>
+        <path class="dag__edge dag__edge--e1" d="M150,58 L78,150" marker-end="url(#ar)"/>
+        <path class="dag__edge dag__edge--e2" d="M190,58 L262,150" marker-end="url(#ar)"/>
+        <path class="dag__edge dag__edge--effect" d="M96,178 L244,178" marker-end="url(#arg)"/>
+        <text class="dag__tau" x="163" y="170" text-anchor="middle">&#964;</text>
+        <g class="dag__node dag__node--x"><circle cx="170" cy="44" r="26"/><text x="170" y="49" text-anchor="middle">X</text></g>
+        <g class="dag__node dag__node--t"><circle cx="70" cy="178" r="26"/><text x="70" y="183" text-anchor="middle">T</text></g>
+        <g class="dag__node dag__node--y"><circle cx="270" cy="178" r="26"/><text x="270" y="183" text-anchor="middle">Y</text></g>
+      </svg>
+      <figcaption class="hero__cap">confounder <b>X</b> · treatment <b>T</b> · outcome <b>Y</b> · effect <b>&#964;</b></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="section__head">
+      <div><p class="eyebrow eyebrow--gold">What I work on</p><h2>Three threads, one question</h2></div>
+      <a class="section__more" href="research.html">Full research →</a>
+    </div>
+    <div class="focus-grid">
+      <div class="focus-card"><p class="focus-card__n">01</p><h3>Bayesian nonparametrics</h3><p>Flexible models — Dirichlet-process GLMs and normalized random measures — that let the data choose the functional form instead of assuming it.</p></div>
+      <div class="focus-card"><p class="focus-card__n">02</p><h3>Causal effects from biased data</h3><p>Estimating treatment effects under outcome-dependent sampling and confounding, with honest post-selection inference for data-adaptive subgroups.</p></div>
+      <div class="focus-card"><p class="focus-card__n">03</p><h3>Experimentation &amp; measurement</h3><p>A/B testing, geo-lift and incrementality, difference-in-differences and synthetic control — turning experiments into decisions.</p></div>
+    </div>
+  </div>
+</section>
+```
+
+```{=html}
+<section class="section">
+  <div class="wrap">
+    <div class="section__head">
+      <div><p class="eyebrow eyebrow--gold">Writing</p><h2>From the blog</h2></div>
+      <a class="section__more" href="blog.html">All posts →</a>
+    </div>
+    <div id="latest"></div>
+  </div>
+</section>
+```

@@ -1,0 +1,51 @@
+project:
+  type: website
+  output-dir: _site
+
+execute:
+  freeze: auto        # cache computed output; CI publishes without re-running code
+
+website:
+  title: "Entejar Alam"
+  description: "Bayesian methods for causal inference, and writing on causal inference & experimentation."
+  site-url: "https://entejar.github.io"          # EDIT to your final URL
+  favicon: assets/glyph.svg
+  navbar:
+    logo: assets/glyph.svg
+    logo-alt: "Entejar Alam"
+    title: "Entejar Alam"
+    left:
+      - text: "Research"
+        href: research.qmd
+      - text: "Publications"
+        href: publications.qmd
+      - text: "Blog"
+        href: blog.qmd
+      - text: "CV"
+        href: cv.qmd
+    right:
+      - icon: github
+        href: "https://github.com/Entejar"
+        aria-label: GitHub
+      - icon: linkedin
+        href: "https://www.linkedin.com/in/YOUR-HANDLE"   # EDIT
+        aria-label: LinkedIn
+  page-footer:
+    border: true
+    left: "© 2026 Entejar Alam · Built with Quarto"
+    right:
+      - text: "RSS"
+        href: blog.xml
+      - icon: github
+        href: "https://github.com/Entejar"
+
+format:
+  html:
+    theme:
+      light: [cosmo, theme/tokens-light.scss, theme/components.scss]
+      dark:  [cosmo, theme/tokens-dark.scss,  theme/components.scss]
+    toc: false
+    include-in-header: head.html
+    css: assets/custom.css
+    grid:
+      body-width: 1140px

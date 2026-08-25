@@ -1,0 +1,61 @@
+---
+title: "Publications"
+pagetitle: "Publications — Entejar Alam"
+---
+
+[Selected work]{.eyebrow .eyebrow--gold}
+
+`*` denotes equal contribution. See Google Scholar for the complete, up-to-date list.
+
+::: {.editme}
+Edit me: the three preprints below are pulled from your arXiv IDs. Add your JASA / Bayesian
+Analysis / Statistics in Medicine entries under "Peer-reviewed", and link a Scholar profile in `_quarto.yml`.
+:::
+
+## Preprints & working papers
+
+```{=html}
+<div class="pub">
+  <div class="pub__meta">2025<br><span class="pub__venue">under review</span></div>
+  <div>
+    <h3 class="pub__title">Semiparametric Bayesian GLM with Inhomogeneous Normalized Random Measures</h3>
+    <p class="pub__authors"><span class="me">Entejar Alam</span>, Paul J. Rathouz, Peter Müller</p>
+    <div class="pub__links"><a href="https://arxiv.org/abs/2502.17827">arXiv:2502.17827</a></div>
+  </div>
+</div>
+<div class="pub">
+  <div class="pub__meta">2025<br><span class="pub__venue">under review</span></div>
+  <div>
+    <h3 class="pub__title">Decision-Theoretic Subgroup Detection with Bayesian Machine Learning</h3>
+    <p class="pub__authors"><span class="me">Entejar Alam</span>*, Poorbita Kundu*, Antonio R. Linero</p>
+    <div class="pub__links"><a href="https://arxiv.org/abs/2509.05832">arXiv:2509.05832</a></div>
+  </div>
+</div>
+<div class="pub">
+  <div class="pub__meta">2025<br><span class="pub__venue">preprint · book</span></div>
+  <div>
+    <h3 class="pub__title">Proportional-Hazards Ordinal BART for Heterogeneous Treatment Effects (PHOBART)</h3>
+    <p class="pub__authors"><span class="me">Entejar Alam</span>, Antonio R. Linero</p>
+    <div class="pub__links"><a href="https://arxiv.org/abs/2502.00606">arXiv:2502.00606</a><a href="https://book.martinez.fyi/phobart.html">Business Data Science · Ch. 25</a></div>
+  </div>
+</div>
+```
+
+## Peer-reviewed
+
+::: {.editme}
+Edit me: add published journal articles here, one `pub` block each (copy the HTML pattern above and swap the venue, e.g. JASA).
+:::
+
+## Software
+
+```{=html}
+<div class="pub">
+  <div class="pub__meta">open source</div>
+  <div>
+    <h3 class="pub__title">CausalABTesting · geo-lift-benchmark · DPGLM · CLogLogBART</h3>
+    <p class="pub__authors">End-to-end A/B testing &amp; uplift, geo-incrementality benchmarks, and the Bayesian model implementations behind the papers above.</p>
+    <div class="pub__links"><a href="https://github.com/Entejar">github.com/Entejar</a></div>
+  </div>
+</div>
+```
